@@ -1,6 +1,7 @@
 package main
 
 import(
+	"context"
 	"fmt"
 	"net"
 	"github.com/venk3389/gRPC-Course/calculator/sumpb"
@@ -9,13 +10,13 @@ import(
 
 type server struct{}
 
-type (s *server) Sum(ctx context.Context, req *sum.SumRequest) (*sum.SumResponse, error){
+func (s *server) Sum(ctx context.Context, req *sum.SumRequest) (*sum.SumResponse, error){
 	fmt.Println(ctx)
 
-	s := &sum.SumResponse{
-		Result : req.Req.GetFirstNumber() + req.Req.GetSecondNumber()
+	resp := &sum.SumResponse{
+		Response : req.Req.GetFirstNumber() + req.Req.GetSecondNumber(),
 	}
-	return s,nil
+	return resp,nil
 }
 
 func main(){

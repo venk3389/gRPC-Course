@@ -17,10 +17,15 @@ func main(){
 	defer cc.Close()
 
 	s := sum.NewSumServiceClient(cc)
-	l := &sum.Request{
-		FirstNumber : 24,
-		SecondNumber : 26,
+	l := &sum.SumRequest{
+		Req : &sum.Request{
+			FirstNumber : 1241,
+			SecondNumber : 265,
+		      },
 	}
-	response := s.Sum(context.Background(),l)
+	response,err := s.Sum(context.Background(),l)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	fmt.Println(response.Response)
 }
