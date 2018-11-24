@@ -65,6 +65,29 @@ func (*server) ComputeAverage(s sum.SumService_ComputeAverageServer) error{
 		Average:avg,
 	})
 }
+
+func (*server) ComputeMaximum(stream sum.SumService_ComputeMaximumServer) error{
+	var largest int32
+	for {
+		data, err := stream.Recv()
+		if err != nil || err == io.EOF{
+			fmt.Println(err.Error())
+			return err
+		}
+		if data.GetNum() > largest{
+			largest = data.GetNum()
+		}
+		err = stream.Send(&sum.ComputeMaximumResponse{
+			Num:largest,
+		})
+		if err != nil{
+			fmt.Println(err.Error())
+			return err
+		}
+	}
+	return nil
+}
+
 func main(){
 	lis, err := net.Listen("tcp",":50051")
 	if err != nil{
