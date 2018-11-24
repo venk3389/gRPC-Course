@@ -16,7 +16,45 @@ func main() {
 	}
 	defer cc.Close()
 
-	doComputeAverage(cc)
+	doComputeMaximum(cc)
+}
+
+func doComputeMaximum(cc *grpc.ClientConn){
+	s := sum.NewSumServiceClient(cc)
+	waitCh :=  make(chan struct{})//channel to wait on data from the server
+	stream, err := s.ComputeMaximum(context.Background())
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	// goroutine to send data to server
+	go func(){
+		nums := []int{5,2,1,3,6,9}
+		for _,v := range nums{
+			if err := stream.Send(&sum.ComputeMaximumRequest{
+				Num: int32(v),
+			});err != nil || err == io.EOF{
+				fmt.Println(err.Error())
+				break
+			}
+		}
+		stream.CloseSend()
+	}()
+	//goroutine to receive data from server
+	go func(){
+		for {
+			resp,err := stream.Recv()
+			if err == io.EOF{
+				break
+			}
+			if err != nil{
+				fmt.Println(err.Error())
+				break
+			}
+			fmt.Println("The current maximum: ",resp.GetNum())
+		}
+		close(waitCh)	
+	}()
+	<-waitCh // exit on receiving all the data from server
 }
 
 func doComputeAverage(cc *grpc.ClientConn) {
