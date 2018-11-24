@@ -3,6 +3,7 @@ package main
 import(
 	"context"
 	"fmt"
+	"io"
 	"net"
 	"github.com/venk3389/gRPC-Course/calculator/sumpb"
 	"google.golang.org/grpc"
@@ -42,7 +43,28 @@ func (*server) PrimeNumberDecomposition(in *sum.PrimeNumberRequest, stream sum.S
 	return nil
 }
 
+func (*server) ComputeAverage(s sum.SumService_ComputeAverageServer) error{
+	var avg float64 = 0.0
+	var add int32 = 0
+	var count int32 = 0
+	for {
+		count++
+		num, err := s.Recv()
+		if err == io.EOF{
+			break
+		}
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		add += num.GetNum()
+		avg = float64(add)/float64(count)
+	}
 
+	return s.SendAndClose(&sum.ComputeAverageResponse{
+		Average:avg,
+	})
+}
 func main(){
 	lis, err := net.Listen("tcp",":50051")
 	if err != nil{
