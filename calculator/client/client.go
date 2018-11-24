@@ -22,7 +22,7 @@ func main() {
 func doPrimeDecomposition(cc *grpc.ClientConn) {
 	s := sum.NewSumServiceClient(cc)
 	l := &sum.PrimeNumberRequest{
-		Num: 210,
+		Num: 210345670,
 	}
 	response, err := s.PrimeNumberDecomposition(context.Background(), l)
 	if err != nil {
@@ -36,7 +36,7 @@ func doPrimeDecomposition(cc *grpc.ClientConn) {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		fmt.Println(out.Num)
+		fmt.Println(out.GetNum())
 	}
 
 }
