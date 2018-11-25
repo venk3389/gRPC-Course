@@ -15,5 +15,15 @@ func main(){
 	}
 	defer cc.Close()
 
-	fmt.Println(greetpb.NewGreetServiceClient(cc))
+	s := greetpb.NewGreetServiceClient(cc)
+	response,err := s.GreetWithDeadline(context.Background(), &greetpb.GreetWithDeadlineRequest{
+		first_name:"venkat",
+		last_name:"lester",
+	
+	})
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println("Response from server: ",response.GetResponse())
 }
