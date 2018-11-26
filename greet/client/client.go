@@ -60,9 +60,10 @@ func main() {
 		fmt.Println(err.Error())
 	}
 	defer cc.Close()
-	//greet call that returns an  message
+	//greet call that returns a deadline exceeded 
 	doGreetWithDeadline(cc, "", "jdhdcb", 1000)
 	//greet call that returns a valid response
 	doGreetWithDeadline(cc, "Venkat", "Tester", 0)
-	//
+	//greet call that returns a invalid argument response
+	doGreetWithDeadline(cc, "Venkatsjdbksjdb", "Tester", 0)
 }
